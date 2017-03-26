@@ -23,3 +23,43 @@ R
 T
 4
  */
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        int vr=sc.nextInt();
+        int vt=sc.nextInt();
+        int t=sc.nextInt();
+        int s=sc.nextInt();
+        int l=sc.nextInt();
+
+        int ttime=l/vt;
+        int cnttime=0;
+        int lent=0;
+        int lenr=0;
+        int breaktime=0;
+        boolean flag=false;
+        
+        while(lent<l&&lenr<l){
+        	if(!flag&&lenr-lent<t||flag&&breaktime>=s){
+        		lenr=lenr+vr;
+        		flag=false;
+        		breaktime=0;
+        	}else{
+        		flag=true;
+        		breaktime++;
+        	}
+        	lent=lent+vt;
+        	cnttime++;
+        }
+        if(lent>=l&&lenr<l){
+        	System.out.println("T");
+        }else if(lent<l&&lenr>=l){
+        	System.out.println("R");
+        }else{
+        	System.out.println("D");
+        }
+        System.out.println(cnttime);
+        
+    }
+}
