@@ -14,3 +14,38 @@
 对于50%的数据，K <= 16， L <= 10；
 对于100%的数据，1 <= K,L <= 100。
  */
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int k = scanner.nextInt();
+        int l = scanner.nextInt();
+        if (l <= 1) {
+            System.out.println(0);
+        } else {
+            //用于计算在i+1个长度的时候末尾数字为k的个数
+            int[][] map = new int[l][k];
+            int m = 1000000007;
+            for (int i = 1; i < map[0].length; i++) {
+                map[0][i] = 1;
+            }
+            for (int i = 1; i < map.length; i++) {
+                for (int j = 0; j < k; j++) {
+                    int currect = map[i - 1][j];
+                    for (int a = 0; a < k; a++) {
+                        if (Math.abs(a - j) != 1) {
+                            map[i][j] = (map[i][j] + map[i - 1][a]) % m;
+                        }
+                    }
+                }
+            }
+            long sum = 0;
+            for (int i = 0; i < map[0].length; i++) {
+                sum += (map[map.length - 1][i]) % m;
+            }
+            System.out.println(sum % m);
+        }
+
+    }
+}
