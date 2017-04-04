@@ -75,143 +75,85 @@ Yes
 　　对于30%的数据，n<=4, n[i]的和小于10.
 　　对于100%的数据，n<=100 , -10^9<=W<=10^9, 1<=n[i]<=1000
  */
+import java.util.Arrays;
 import java.util.Scanner;
 public class Main {
+
+    static class Node implements Comparable{
+        public int id;
+        public int value;
+
+        @Override
+        public int compareTo(Object o) {
+            if (o != null && o instanceof Node) {
+                Node node = (Node) o;
+                return this.value - node.value;
+            }
+            return 0;
+        }
+
+    }
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         int n = scanner.nextInt();
         int w = scanner.nextInt();
-        int[] nums = new int[n];
+        int sum = 0;
+        Node[] nums = new Node[n];
         for (int i = 0; i < n; i++) {
-            nums[i] = scanner.nextInt();
+            nums[i] = new Node();
+            nums[i].value = scanner.nextInt();
+            nums[i].id = i + 1;
+            sum += nums[i].value;
         }
-        printResult(nums, w);
-    }
-
-    public static void printResult(int[] nums, int w) {
-        int maxY = 0;
-        for (int i = 0; i < nums.length; i++) {
-            maxY += nums[i];
-            nums[i] *= 2;
-        }
-        if (w <= 0) {
+        if (sum < w || w <= 0) {
             System.out.println("No");
-        } else if (w == 1) {
-            int min = getMin(nums);
-            if (nums[min] == 2) {
+        } else {
+            Arrays.sort(nums);
+            if (nums[0].value <= w) {
                 System.out.println("Yes");
-                runThread1(nums, min);
-                if (min == 0) {
-                    runThread2(nums, 1, nums.length - 1);
-                } else {
-                    runThread2(nums, 0, min - 1);
-                    runThread2(nums, min + 1, nums.length - 1);
+                int rest = sum - w;
+                System.out.print(nums[0].id);
+                int i = n - 1;
+                while (i >= 0 && rest >= nums[i].value) {
+                    for (int j = 0; j < nums[i].value; j++) {
+                        System.out.print(" " + nums[i].id + " " + nums[i].id);
+                    }
+                    rest -= nums[i].value;
+                    i--;
                 }
-                runThread1(nums, min);
-            } else {
+                for (int j = 0; j < rest; j++) {
+                    System.out.print(" " + nums[i].id + " " + nums[i].id);
+                }
+                System.out.print(" " + nums[0].id);
+                nums[0].value -= 1;
+                nums[i].value -= rest;
+                for (int j = 0; j <= i; j++) {
+                    for (int k = 0; k < nums[j].value; k++) {
+                        System.out.print(" " + nums[j].id + " " + nums[j].id);
+                    }
+                }
+            } else if (n == 1 || w == 1) {
                 System.out.println("No");
-            }
-        } else if (nums.length == 1 && w > 1 && w < maxY) {
-            System.out.println("No");
-        } else if (nums.length == 1 && w == maxY) {
-            System.out.println("Yes");
-            while (nums[0] > 0) {
-                runThread1(nums, 0);
-            }
-        } else if (nums.length != 1 && w > 1 && w <= maxY) {
-            System.out.println("Yes");
-            int count = (w - 2) * 2;
-            if (count == 0) {
-                int tempI = 0;
-                for (int i = 0; i < nums.length - 1; i++) {
-                    if (nums[i] >= 4) {
-                        tempI = i;
-                        break;
-                    }
-                }
-                runThread1(nums, tempI);
-                if (tempI == 0)
-                    runThread2(nums, 1, nums.length - 2);
-                else {
-                    runThread2(nums, 0, tempI - 1);
-                    runThread2(nums, tempI + 1, nums.length - 2);
-                }
-                while (nums[nums.length - 1] > 2) {
-                    runThread1(nums, nums.length - 1);
-                }
-                runThread1(nums, tempI);       //此时，y = tempY[tempI] + 1 = 1
-                runThread1(nums, nums.length - 1);  //此时，tempY[N.length-1] = y = 1
-                while (nums[tempI] > 0) {       //执行完N[tempI]中剩余的线程
-                    runThread1(nums, tempI);
-                }
-                runThread1(nums, nums.length - 1);   //此时执行最后一个线程，y = tempY[N.length-1] + 1 = 2
             } else {
-                int i = -1;
-                //从第0个进程开始，执行到第i个进程，当tempY[i] = w-3, y = w - 2时结束
-                while(count > 0) {
-                    i++;
-                    while(nums[i] > 0) {
-                        runThread1(nums, i);    //此处执行两次runThread1表示执行一次整个循环，y值便会自增1
-                        runThread1(nums, i);
-                        count = count - 2;
-                        if(count == 0)
-                            break;
+                System.out.println("Yes");
+                System.out.print(nums[1].id);
+                for (int i = 0; i < nums[0].value - 1; i++) {
+                    System.out.print(" " + nums[0].id + " " + nums[0].id);
+                }
+                System.out.print(" "+nums[1].id);
+                for (int i = 0; i < w - 2; i++) {
+                    System.out.print(" " + nums[1].id + " " + nums[1].id);
+                }
+                System.out.print(" " + nums[0].id);
+                nums[1].value = nums[1].value - w + 1;
+                for (int i = 1; i < n; i++) {
+                    for (int j = 0; j < nums[i].value; j++) {
+                        System.out.print(" " + nums[i].id + " " + nums[i].id);
                     }
                 }
-                runThread1(nums, i);          //执行完此句，此时tempY[i] = w - 2
-                runThread2(nums, i+1, nums.length-2);    //执行进程i+1到 N.length-2之间的所有线程
-                while(nums[nums.length-1] > 2) {    //执行最后一个进程中的线程
-                    runThread1(nums, nums.length-1);
-                }
-                runThread1(nums, i);         //执行完此句，此时y = tempY[i] + 1 = w - 1
-                runThread1(nums, nums.length-1);  //执行完此句，此时tempY[N.length-1] = y =  w - 1
-                while(nums[i] > 0) {     //执行完进程i中剩余的线程
-                    runThread1(nums, i);
-                }
-                runThread1(nums, nums.length-1);   //这是最后一个线程，执行完后，y = tempY[N.length-1] + 1 = w
-            }
-        } else if (w > maxY) {
-            System.out.println("No");
-        }
-
-
-    }
-
-    //执行第i个进程中的一个线程，执行完后，总线程数减1
-    public static void runThread1(int[] N, int i) {
-//        if (N[i] > 0) {
-            System.out.print((i+1)+" ");
-            N[i]--;
-//        }
-    }
-    //从第i个进程开始，到第n个进程结束，顺序执行其中的每一个线程
-    public static void runThread2(int[] N, int i, int n) {
-        for( ;i <= n;i++) {
-            while(N[i] > 0) {  //执行第i个进程中的每一个线程
-                System.out.print((i+1)+" ");
-                N[i]--;
+                System.out.print(" " + nums[0].id);
             }
         }
     }
-
-    public static int getMin(int[] nums) {
-        int min = 0;
-        for (int i = 0; i < nums.length; i++) {
-            if (nums[i] < nums[min]) {
-                min = i;
-            }
-        }
-        return min;
-    }
-
-    public static int getMax(int[] nums) {
-        int max = 0;
-        for (int i = 0; i < nums.length; i++) {
-            if (nums[i] > nums[max]) {
-                max = i;
-            }
-        }
-        return max;
-    }
-
 }
