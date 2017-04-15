@@ -31,3 +31,57 @@
 样例输出
 2
  */
+import java.util.Scanner;
+
+public class Main {
+    private static int[] vist;
+    private static int[] way;
+    private static int[] cnt;
+    private static int ans = 0;
+    private static int[][] map;
+    private static int n;
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        n = sc.nextInt();
+        int m = sc.nextInt();
+        vist = new int[n];
+        way = new int[n];
+        cnt = new int[n];
+        map = new int[n][n];
+        for (int i = 0; i < m; i++) {
+            int u = sc.nextInt() - 1;
+            int v = sc.nextInt() - 1;
+            map[u][v] = 1;
+            map[v][u] = 1;
+        }
+        int s = sc.nextInt()-1;
+        int t = sc.nextInt()-1;
+        dfs(s, t, 0);
+        int sum = 0;
+        for (int i = 0; i < n; i++) {
+            if (cnt[i] == ans) {
+                sum++;
+            }
+        }
+        System.out.println(sum - 2);
+    }
+
+    public static void dfs(int s, int t, int step) {
+        vist[s] = 1;
+        way[step] = s;
+        if (s == t) {
+            ans++;
+            for (int i = 0; i <= step; i++) {
+                cnt[way[i]]++;
+            }
+        }
+        for (int i = 0; i < n; i++) {
+            if (map[s][i] != 0 && vist[i] == 0) {
+                vist[i] = 1;
+                dfs(i, t, step + 1);
+                vist[i] = 0;
+            }
+        }
+    }
+}
