@@ -21,9 +21,9 @@ public class Main{
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         int n = scanner.nextInt();
-        int[] nums = new int[n+1];
+        long[] nums = new long[n + 1];
         for (int i = 0; i <= n; i++) {
-            nums[i] = scanner.nextInt();
+            nums[i] = scanner.nextLong();
         }
         long[][] m = new long[n + 1][n + 1];
         for (int l = 2; l <= n; l++) {
@@ -31,7 +31,9 @@ public class Main{
                 int j = i + l - 1;
                 m[i][j] = Long.MAX_VALUE;
                 for (int k = i; k < j; k++) {
-                    m[i][j] = Math.min(m[i][j], m[i][k] + m[k + 1][j] + nums[i - 1] * nums[k] * nums[j]);
+                    long temp = m[i][k] + m[k + 1][j] + nums[i - 1] * nums[k] * nums[j];
+                    if (temp < 0) temp = Long.MAX_VALUE;
+                    m[i][j] = Math.min(m[i][j], temp);
                 }
             }
         }
